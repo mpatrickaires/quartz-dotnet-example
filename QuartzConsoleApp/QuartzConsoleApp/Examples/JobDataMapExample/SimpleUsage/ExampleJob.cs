@@ -1,0 +1,69 @@
+﻿using Quartz;
+using System;
+using System.Threading.Tasks;
+
+namespace QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage
+{
+    public class ExampleJob : IJob
+    {
+        public Task Execute(IJobExecutionContext context)
+        {
+            var logger = new JobLogger("JobDataMapExample.SimpleUsage");
+            logger.Log();
+            try
+            {
+                JobDataMap dataMap = context.JobDetail.JobDataMap;
+
+                var name = dataMap.GetString("name");
+                var age = dataMap.GetInt("age");
+                Console.WriteLine($"Name: {name} - Age: {age}");
+
+                // Using the get with the wrong type will throw an InvalidCastException                
+                //var wrongType = dataMap.GetInt("name");
+
+                // Using the get with an unknown key will give the default value of the return type
+                //var unknownData = dataMap.GetInt("unknownData");
+                //Console.WriteLine($"Unknown Data: {unknownData}");
+
+                // By default, data stored or modified through the Put is volatile, so it will only
+                // last for the duration of the current job execution. Once the execution is finished,
+                // the data will disappear or will return to its original state.
+                //
+                // In the next execution, the age will not be the one defined here.
+                dataMap.Put("age", 30);
+
+                // There will never be a value in 'newData', as it is not persisted across executions.
+                var newData = (string)dataMap.Get("newData") ?? "There is no new data :(";
+                Console.WriteLine($"New Data: {newData}");
+                dataMap.Put("newData", "It's me, the new data :)");
+
+                // A key shared by the IJobDetail and the ITrigger will have a different value based
+                // on the following:
+                //
+                // - If accessed through the JobDetail.JobDataMap, it will have the value that
+                // was defined at the IJobDetail.
+                //
+                // - If accessed through the Trigger.JobDataMap or MergedJobDataMap, it will have
+                // the value that was defined at the ITrigger (the ITrigger has priority over the
+                // IJobDetail in data sharing).
+                const string SharedData = "sharedData";
+                var sharedDataJobDetail = context.JobDetail.JobDataMap.GetString(SharedData);
+                var sharedDataTrigger = context.Trigger.JobDataMap.GetString(SharedData);
+                var sharedDataMerged = context.MergedJobDataMap.GetString(SharedData);
+                Console.WriteLine($"Shared Data [JobDetail.JobDataMap]: {sharedDataJobDetail}");
+                Console.WriteLine($"Shared Data [Trigger.JobDataMap]: {sharedDataTrigger}");
+                Console.WriteLine($"Shared Data [MergedJobDataMap]: {sharedDataMerged}");
+
+                Console.WriteLine();
+
+                return Task.CompletedTask;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Oops! An error ocurred during the execution of the job - " +
+                    $"{e.GetType()}: {e.Message}");
+                return Task.CompletedTask;
+            }
+        }
+    }
+}
