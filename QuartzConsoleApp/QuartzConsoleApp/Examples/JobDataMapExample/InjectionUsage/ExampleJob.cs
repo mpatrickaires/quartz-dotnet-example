@@ -47,6 +47,7 @@ namespace QuartzConsoleApp.Examples.JobDataMapExample.InjectionUsage
             {
                 Console.WriteLine($"Oops! An error ocurred during the execution of the job - " +
                     $"{e.GetType()}: {e.Message}");
+                Console.WriteLine();
                 return Task.CompletedTask;
             }
         }

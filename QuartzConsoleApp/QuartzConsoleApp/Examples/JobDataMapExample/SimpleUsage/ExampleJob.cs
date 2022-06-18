@@ -8,8 +8,11 @@ namespace QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage
     {
         public Task Execute(IJobExecutionContext context)
         {
+            const string SharedData = "sharedData";
+
             var logger = new JobLogger("JobDataMapExample.SimpleUsage");
             logger.Log();
+
             try
             {
                 JobDataMap dataMap = context.JobDetail.JobDataMap;
@@ -45,6 +48,9 @@ namespace QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage
                 Console.WriteLine($"New Data: {newData}");
                 dataMap.Put("newData", "It's me, the new data :)");
 
+                // If we try to add a key that already exists, an ArgumentException will be throwed.
+                //dataMap.Add("age", 80);
+
                 // A key shared by the IJobDetail and the ITrigger will have a different value based
                 // on the following:
                 //
@@ -54,13 +60,13 @@ namespace QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage
                 // - If accessed through the Trigger.JobDataMap or MergedJobDataMap, it will have
                 // the value that was defined at the ITrigger (the ITrigger has priority over the
                 // IJobDetail in data sharing).
-                const string SharedData = "sharedData";
                 var sharedDataJobDetail = context.JobDetail.JobDataMap.GetString(SharedData);
                 var sharedDataTrigger = context.Trigger.JobDataMap.GetString(SharedData);
                 var sharedDataMerged = context.MergedJobDataMap.GetString(SharedData);
-                Console.WriteLine($"Shared Data [JobDetail.JobDataMap]: {sharedDataJobDetail}");
-                Console.WriteLine($"Shared Data [Trigger.JobDataMap]: {sharedDataTrigger}");
-                Console.WriteLine($"Shared Data [MergedJobDataMap]: {sharedDataMerged}");
+                Console.WriteLine("Shared Data:");
+                Console.WriteLine($"\t- [JobDetail.JobDataMap]: {sharedDataJobDetail}");
+                Console.WriteLine($"\t- [Trigger.JobDataMap]: {sharedDataTrigger}");
+                Console.WriteLine($"\t- [MergedJobDataMap]: {sharedDataMerged}");
 
                 Console.WriteLine();
 
@@ -70,6 +76,7 @@ namespace QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage
             {
                 Console.WriteLine($"Oops! An error ocurred during the execution of the job - " +
                     $"{e.GetType()}: {e.Message}");
+                Console.WriteLine();
                 return Task.CompletedTask;
             }
         }

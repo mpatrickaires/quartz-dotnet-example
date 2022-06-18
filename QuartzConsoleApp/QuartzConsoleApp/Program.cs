@@ -1,4 +1,7 @@
 ﻿using QuartzConsoleApp.Examples.JobDataMapExample.InjectionUsage;
+using QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage;
+using QuartzConsoleApp.Examples.JobExample.JobStateAndConcurrency;
+using System;
 using System.Threading.Tasks;
 
 namespace QuartzConsoleApp
@@ -12,8 +15,15 @@ namespace QuartzConsoleApp
             // Uncomment the following line to see metadata about the Quartz execution
             //Quartz.Logging.LogProvider.SetCurrentLogProvider(new ConsoleLogProvider());
 
-            //await ClientJobDataMapSimpleUsage.Run();
-            await ClientJobDataMapInjectionUsage.Run();
+            // Doing so to prevent Visual Studio automatic code cleanup from removing the using
+            // of commented code.
+            Func<Task> clientJobDataMapSimpleUsage = ClientJobDataMapSimpleUsage.Run;
+            Func<Task> clientJobDataMapInjectionUsage = ClientJobDataMapInjectionUsage.Run;
+            Func<Task> clientJobStateAndConcurrency = ClientJobStateAndConcurrency.Run;
+
+            await clientJobDataMapSimpleUsage();
+            //await ClientJobDataMapInjectionUsage.Run();
+            //await ClientJobStateAndConcurrency.Run();
         }
     }
 
