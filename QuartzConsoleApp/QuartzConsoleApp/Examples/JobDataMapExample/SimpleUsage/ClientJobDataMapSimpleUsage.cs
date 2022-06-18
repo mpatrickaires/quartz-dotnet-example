@@ -3,9 +3,9 @@ using Quartz.Impl;
 using System;
 using System.Threading.Tasks;
 
-namespace QuartzConsoleApp.Examples.JobDataMapExample.InjectionUsage
+namespace QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage
 {
-    public static class Client
+    public static class ClientJobDataMapSimpleUsage
     {
         const string SharedData = "sharedData";
 
@@ -18,8 +18,7 @@ namespace QuartzConsoleApp.Examples.JobDataMapExample.InjectionUsage
             IJobDetail job = JobBuilder.Create<ExampleJob>()
                 .WithIdentity("myJob", "myGroup")
                 .UsingJobData("name", "Andrew")
-                .UsingJobData("age", "26")
-                .UsingJobData("wrongType", "Text")
+                .UsingJobData("age", 26)
                 .UsingJobData(SharedData, "I'm from IJobDetail")
                 .Build();
 

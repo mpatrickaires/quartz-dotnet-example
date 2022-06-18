@@ -9,4 +9,8 @@
     <PackageReference Include="Quartz" Version="3.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Examples\JobExample\JobStateAndConcurrencyExample\" />
+  </ItemGroup>
+
 </Project>

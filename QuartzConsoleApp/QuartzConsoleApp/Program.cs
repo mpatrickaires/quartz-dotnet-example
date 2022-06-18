@@ -1,16 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿using QuartzConsoleApp.Examples.JobDataMapExample.InjectionUsage;
+using System.Threading.Tasks;
 
 namespace QuartzConsoleApp
 {
     internal class Program
     {
+        public static object ClientSimpleUsage { get; private set; }
+
         static async Task Main(string[] args)
         {
             // Uncomment the following line to see metadata about the Quartz execution
             //Quartz.Logging.LogProvider.SetCurrentLogProvider(new ConsoleLogProvider());
 
-            //await Examples.JobDataMapExample.SimpleUsage.Client.Run();
-            await Examples.JobDataMapExample.InjectionUsage.Client.Run();
+            //await ClientJobDataMapSimpleUsage.Run();
+            await ClientJobDataMapInjectionUsage.Run();
         }
     }
 
