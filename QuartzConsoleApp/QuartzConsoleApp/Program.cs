@@ -1,5 +1,6 @@
 ﻿using QuartzConsoleApp.Examples.JobDataMapExample.InjectionUsage;
 using QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage;
+using QuartzConsoleApp.Examples.JobExample.JobConcurrency;
 using QuartzConsoleApp.Examples.JobExample.JobState;
 using System;
 using System.Threading.Tasks;
@@ -20,10 +21,12 @@ namespace QuartzConsoleApp
             Func<Task> clientJobDataMapSimpleUsage = ClientJobDataMapSimpleUsage.Run;
             Func<Task> clientJobDataMapInjectionUsage = ClientJobDataMapInjectionUsage.Run;
             Func<Task> clientJobState = ClientJobState.Run;
+            Func<Task> clientJobConcurrency = ClientJobConcurrency.Run;
 
             //await clientJobDataMapSimpleUsage();
             //await clientJobDataMapInjectionUsage();
-            await clientJobState();
+            //await clientJobState();
+            await clientJobConcurrency();
         }
     }
 
