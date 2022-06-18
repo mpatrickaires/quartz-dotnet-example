@@ -18,12 +18,20 @@ namespace QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage
                 var age = dataMap.GetInt("age");
                 Console.WriteLine($"Name: {name} - Age: {age}");
 
-                // Using the get with the wrong type will throw an InvalidCastException                
+                // The following can happen when using the get with the wrong type:
+                //
+                // - If conversion is possible, it will be converted.
+                //
+                // - If conversion is not possible, an InvalidCastException exception will be
+                // throwed.
+                //
+                // The following line represents a conversion that is not possible, so the 
+                // InvalidCastException will be throwed.
                 //var wrongType = dataMap.GetInt("name");
 
                 // Using the get with an unknown key will give the default value of the return type
-                //var unknownData = dataMap.GetInt("unknownData");
-                //Console.WriteLine($"Unknown Data: {unknownData}");
+                var unknownData = dataMap.GetInt("unknownData");
+                Console.WriteLine($"Unknown Data: {unknownData}");
 
                 // By default, data stored or modified through the Put is volatile, so it will only
                 // last for the duration of the current job execution. Once the execution is finished,

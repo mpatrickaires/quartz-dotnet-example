@@ -3,7 +3,7 @@ using Quartz.Impl;
 using System;
 using System.Threading.Tasks;
 
-namespace QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage
+namespace QuartzConsoleApp.Examples.JobDataMapExample.InjectionUsage
 {
     public static class Client
     {
@@ -18,7 +18,8 @@ namespace QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage
             IJobDetail job = JobBuilder.Create<ExampleJob>()
                 .WithIdentity("myJob", "myGroup")
                 .UsingJobData("name", "Andrew")
-                .UsingJobData("age", 26)
+                .UsingJobData("age", "26")
+                .UsingJobData("wrongType", "Text")
                 .UsingJobData(SharedData, "I'm from IJobDetail")
                 .Build();
 

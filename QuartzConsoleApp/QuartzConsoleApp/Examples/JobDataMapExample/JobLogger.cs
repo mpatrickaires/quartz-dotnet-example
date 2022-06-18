@@ -11,9 +11,8 @@ namespace QuartzConsoleApp.Examples.JobDataMapExample
             _prefix = prefix;
         }
 
-        public void Log(object param = null)
+        public void Log(object message = null)
         {
-            var message = param?.ToString();
             Console.WriteLine($"({DateTime.Now.ToLongTimeString()}) [{_prefix}] {message}");
         }
     }
