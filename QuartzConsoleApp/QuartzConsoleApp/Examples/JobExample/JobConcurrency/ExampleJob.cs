@@ -20,7 +20,7 @@ namespace QuartzConsoleApp.Examples.JobExample.JobConcurrency
     {
         public async Task Execute(IJobExecutionContext context)
         {
-            var logger = new JobLogger("JobExample.JobConcurrency");
+            var logger = new CustomLogger("JobExample.JobConcurrency");
             logger.Log();
             try
             {

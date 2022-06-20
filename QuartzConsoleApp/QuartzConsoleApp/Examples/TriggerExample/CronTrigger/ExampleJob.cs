@@ -9,7 +9,7 @@ namespace QuartzConsoleApp.Examples.TriggerExample.CronTrigger
     {
         public Task Execute(IJobExecutionContext context)
         {
-            var logger = new JobLogger("TriggerExample.CronTrigger");
+            var logger = new CustomLogger("TriggerExample.CronTrigger");
             logger.Log();
 
             Console.WriteLine("Job executed!");

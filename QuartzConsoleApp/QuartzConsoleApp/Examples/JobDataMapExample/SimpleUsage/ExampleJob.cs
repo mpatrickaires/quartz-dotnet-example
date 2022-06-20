@@ -10,7 +10,7 @@ namespace QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage
         {
             const string SharedData = "sharedData";
 
-            var logger = new JobLogger("JobDataMapExample.SimpleUsage");
+            var logger = new CustomLogger("JobDataMapExample.SimpleUsage");
             logger.Log();
 
             try

@@ -14,7 +14,7 @@ namespace QuartzConsoleApp.Examples.JobDataMapExample.InjectionUsage
 
         public Task Execute(IJobExecutionContext context)
         {
-            var logger = new JobLogger("JobDataMapExample.InjectionUsage");
+            var logger = new CustomLogger("JobDataMapExample.InjectionUsage");
             logger.Log();
             try
             {

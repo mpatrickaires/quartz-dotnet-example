@@ -15,7 +15,7 @@ namespace QuartzConsoleApp.Examples.JobExample.JobState
 
         public Task Execute(IJobExecutionContext context)
         {
-            var logger = new JobLogger("JobExample.JobState");
+            var logger = new CustomLogger("JobExample.JobState");
             logger.Log();
             try
             {

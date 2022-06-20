@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace QuartzConsoleApp.Examples.JobDataMapExample
+namespace QuartzConsoleApp
 {
-    public class JobLogger
+    public class CustomLogger
     {
         private readonly string _prefix;
 
-        public JobLogger(string prefix)
+        public CustomLogger(string prefix)
         {
             _prefix = prefix;
         }
@@ -14,6 +14,11 @@ namespace QuartzConsoleApp.Examples.JobDataMapExample
         public void Log(object message = null)
         {
             Console.WriteLine($"({DateTime.Now.ToLongTimeString()}) [{_prefix}] {message}");
+        }
+
+        public static void LogAndBreak(object message = null)
+        {
+            Console.WriteLine($"{message}\n");
         }
     }
 }
