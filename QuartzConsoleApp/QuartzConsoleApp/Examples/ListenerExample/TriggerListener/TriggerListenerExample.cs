@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 namespace QuartzConsoleApp.Examples.ListenerExample.TriggerListener
 {
     public class TriggerListenerExample : ITriggerListener
+    // You can also inherit from TriggerListenerSupport, that already implements the ITriggerListener
+    // interface with empty methods, allowing you to only implement the ones you're interested in.
     {
         public string Name => "TriggerListenerExample";
 
