@@ -2,6 +2,7 @@
 using QuartzConsoleApp.Examples.JobDataMapExample.SimpleUsage;
 using QuartzConsoleApp.Examples.JobExample.JobConcurrency;
 using QuartzConsoleApp.Examples.JobExample.JobState;
+using QuartzConsoleApp.Examples.ListenerExample.JobListener;
 using QuartzConsoleApp.Examples.ListenerExample.TriggerListener;
 using QuartzConsoleApp.Examples.TriggerExample.CronTrigger;
 using System;
@@ -26,13 +27,15 @@ namespace QuartzConsoleApp
             Func<Task> clientJobConcurrency = ClientJobConcurrency.Run;
             Func<Task> clientCronTrigger = ClientCronTrigger.Run;
             Func<Task> clientTriggerListener = ClientTriggerListener.Run;
+            Func<Task> clientJobListener = ClientJobListener.Run;
 
             //await clientJobDataMapSimpleUsage();
             //await clientJobDataMapInjectionUsage();
             //await clientJobState();
             //await clientJobConcurrency();
             //await clientCronTrigger();
-            await clientTriggerListener();
+            //await clientTriggerListener();
+            await clientJobListener();
         }
     }
 
