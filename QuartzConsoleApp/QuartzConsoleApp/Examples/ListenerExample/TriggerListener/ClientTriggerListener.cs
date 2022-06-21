@@ -23,7 +23,7 @@ namespace QuartzConsoleApp.Examples.ListenerExample.TriggerListener
                 .ForJob(job)
                 .StartNow()
                 .WithSimpleSchedule(x => x
-                    .WithInterval(TimeSpan.FromSeconds(2))
+                    .WithInterval(TimeSpan.FromSeconds(5))
                     .RepeatForever())
                 .Build();
 
