@@ -36,7 +36,7 @@ namespace QuartzConsoleApp.Examples.ListenerExample.TriggerListener
             // The return here will dictate if the job will be executed or not:
             // - false: the job will not be vetoed and will execute normally.
             // - true: the job will be vetoed and will not be executed.
-            var returnValue = true;
+            var returnValue = false;
 
             CustomLogger.LogAndBreak($"Veto job execution! Return: {returnValue}");
 
