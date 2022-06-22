@@ -28,7 +28,9 @@ namespace QuartzConsoleApp.Examples.ListenerExample.JobListener
 
         public Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken cancellationToken = default)
         {
-            CustomLogger.LogAndBreak("Job was executed!");
+            var jobData = context.MergedJobDataMap.GetString("jobData");
+
+            CustomLogger.LogAndBreak($"Job was executed! - jobData: {jobData}");
 
             return Task.CompletedTask;
         }
