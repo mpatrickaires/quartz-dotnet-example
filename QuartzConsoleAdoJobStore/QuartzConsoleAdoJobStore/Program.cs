@@ -14,7 +14,7 @@ namespace QuartzConsoleAdoJobStore
             // https://github.com/quartznet/quartznet/tree/main/database/tables
             //
             // To Quartz access the database, you must install it respective drive through the Nuget.
-            // In this example, the Npgsql package was intalled.
+            // In this example, the Npgsql package was isntalled.
 
             var scheduler = await new StdSchedulerFactory().GetScheduler();
 
