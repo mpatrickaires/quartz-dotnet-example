@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
+using QuartzAspNetCoreApp.Extensions;
 using QuartzAspNetCoreApp.Jobs;
 
 namespace QuartzAspNetCoreApp
@@ -17,7 +18,6 @@ namespace QuartzAspNetCoreApp
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             //services.Configure<QuartzOptions>(Configuration.GetSection("Quartz"));
@@ -27,46 +27,25 @@ namespace QuartzAspNetCoreApp
                 const string groupName = "myGroup";
                 const string defaultCronExpression = "0/5 * * * * ?";
 
+                // This configuration is necessary if we want to inject services at our job instances
+                // when they are created by the job factory.  
                 q.UseMicrosoftDependencyInjectionJobFactory();
 
-                var greetingsJobKey = new JobKey("greetingsJob", groupName);
-
-                q.AddJob<GreetingsJob>(j =>
-                {
-                    j.WithIdentity(greetingsJobKey);
-                });
-
-                q.AddTrigger(t =>
-                {
-                    t.ForJob(greetingsJobKey);
-                    t.StartNow();
-                    t.WithCronSchedule(defaultCronExpression);
-                });
-
-                var dependencyInjectionJobKey = new JobKey("dependencyInjectionJob", groupName);
-
-                q.AddJob<DependencyInjectionJob>(j =>
-                {
-                    j.WithIdentity(dependencyInjectionJobKey);
-                });
-
-                q.AddTrigger(t =>
-                {
-                    t.ForJob(dependencyInjectionJobKey);
-                    t.StartNow();
-                    t.WithCronSchedule(defaultCronExpression);
-                });
+                q.AddJobAndTrigger<GreetingsJob>(defaultCronExpression, groupName);
+                q.AddJobAndTrigger<DependencyInjectionJob>(defaultCronExpression, groupName);
+                q.AddJobAndTrigger<SlowJob>(defaultCronExpression, groupName);
             });
 
             services.AddQuartzHostedService(options =>
             {
+                // If this option is set to true, then when the app is shutdown it will await all the
+                // current jobs in execution to finish.
                 options.WaitForJobsToComplete = true;
             });
 
             services.AddControllers();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
