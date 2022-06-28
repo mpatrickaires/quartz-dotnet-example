@@ -15,8 +15,11 @@ namespace QuartzAspNetCoreApp.Jobs
 
         public Task Execute(IJobExecutionContext context)
         {
-            if (_logger != null) _logger.LogInformation("DependencyInjectionJob executed!\n");
-            else System.Console.WriteLine("DependencyInjectionJob executed without logger!\n");
+            var message = _logger != null
+                ? "DependencyInjectionJob executed and injected!"
+                : "DependencyInjectionJob executed without being injected!";
+
+            System.Console.WriteLine($"{message}\n");
 
             return Task.CompletedTask;
         }
