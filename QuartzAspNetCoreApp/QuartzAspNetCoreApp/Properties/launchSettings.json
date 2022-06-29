@@ -15,8 +15,13 @@
     },
     "QuartzAspNetCoreApp": {
       "commandName": "Project",
-      "launchUrl": "weatherforecast",
+      "launchUrl": "quartzaspnetcoreapp",
       "applicationUrl": "https://localhost:5001;http://localhost:5000"
+    },
+    "QuartzAspNetCoreApp2": {
+      "commandName": "Project",
+      "launchUrl": "quartzaspnetcoreapp",
+      "applicationUrl": "https://localhost:5003;http://localhost:5002"
     }
   }
 }

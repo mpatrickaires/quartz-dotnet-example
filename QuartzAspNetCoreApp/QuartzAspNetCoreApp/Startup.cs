@@ -6,11 +6,15 @@ using Microsoft.Extensions.Hosting;
 using Quartz;
 using QuartzAspNetCoreApp.Extensions;
 using QuartzAspNetCoreApp.Jobs;
+using System;
 
 namespace QuartzAspNetCoreApp
 {
     public class Startup
     {
+        const string groupName = "myGroup";
+        const string defaultCronExpression = "0/5 * * * * ?";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -24,6 +28,7 @@ namespace QuartzAspNetCoreApp
             {
                 // Default value
                 options.Scheduling.OverWriteExistingData = true;
+
                 // Default value; only have effect if OverWriteExistingData is false, which may
                 // cause an exception to be thrown.
                 options.Scheduling.IgnoreDuplicates = false;
@@ -33,6 +38,14 @@ namespace QuartzAspNetCoreApp
             {
                 q.SchedulerName = "QuartzAspNetCoreApp";
                 q.SchedulerId = "AUTO";
+
+                // This configuration is necessary if we want to inject services at our job instances
+                // when they are created by the job factory.  
+                // In the current example, if this configuration is not set and the
+                // DependencyInjectionJob job is created, an error will occur because the job
+                // factory will not be able to work around the job's constructor that asks for the
+                // dependency injection.
+                q.UseMicrosoftDependencyInjectionJobFactory();
 
                 q.UsePersistentStore(storeOptions =>
                 {
@@ -45,27 +58,22 @@ namespace QuartzAspNetCoreApp
                     storeOptions.UseClustering();
                 });
 
-                const string groupName = "myGroup";
-                const string defaultCronExpression = "0/5 * * * * ?";
+                string dailyCronExpression = $"0 0 {DateTime.Now.Hour} * * ?";
 
-                // This configuration is necessary if we want to inject services at our job instances
-                // when they are created by the job factory.  
-                // In the current example, if this configuration is not set and the
-                // DependencyInjectionJob job is created, an error will occur because the job
-                // factory will not be able to work around the job's constructor that asks for the
-                // dependency injection.
-                q.UseMicrosoftDependencyInjectionJobFactory();
 
-                q.AddJobAndTrigger<GreetingsJob>(defaultCronExpression, groupName);
-                q.AddJobAndTrigger<DependencyInjectionJob>(defaultCronExpression, groupName);
-                q.AddJobAndTrigger<SlowJob>(defaultCronExpression, groupName);
+                //q.AddJobAndCronTrigger<GreetingsJob>(defaultCronExpression, false, groupName);
+                //q.AddJobAndCronTrigger<DependencyInjectionJob>(defaultCronExpression, false,
+                //    groupName);
+                //q.AddJobAndCronTrigger<SlowJob>(defaultCronExpression, false, groupName);
+                //q.AddJobAndCronTrigger<RecoverableJob>(dailyCronExpression, false, groupName);
+                q.AddJobAndSimpleTrigger<RecoverableJob>(0, TimeSpan.MaxValue, true, groupName);
             });
 
             services.AddQuartzHostedService(options =>
             {
                 // If this option is set to true, then when the app is shutdown it will await all the
                 // current jobs in execution to finish.
-                options.WaitForJobsToComplete = true;
+                //options.WaitForJobsToComplete = true;
             });
 
             services.AddControllers();

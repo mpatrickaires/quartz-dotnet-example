@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Quartz;
+using System;
 using System.Threading.Tasks;
 
 namespace QuartzAspNetCoreApp.Jobs
@@ -19,7 +20,7 @@ namespace QuartzAspNetCoreApp.Jobs
                 ? "DependencyInjectionJob executed and injected!"
                 : "DependencyInjectionJob executed without being injected!";
 
-            System.Console.WriteLine($"{message}\n");
+            Console.WriteLine($"{message}\n");
 
             return Task.CompletedTask;
         }
