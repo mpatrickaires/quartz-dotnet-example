@@ -1,26 +1,27 @@
 ﻿using Microsoft.Extensions.Logging;
 using Quartz;
-using System;
+using QuartzAspNetCoreApp.Jobs.Logger;
 using System.Threading.Tasks;
 
 namespace QuartzAspNetCoreApp.Jobs
 {
     public class DependencyInjectionJob : IJob
     {
-        private ILogger<DependencyInjectionJob> _logger;
+        private ILogger<DependencyInjectionJob> _injectedObject;
+        private JobLogger<DependencyInjectionJob> _logger = new JobLogger<DependencyInjectionJob>();
 
-        public DependencyInjectionJob(ILogger<DependencyInjectionJob> logger)
+        public DependencyInjectionJob(ILogger<DependencyInjectionJob> injectedObject)
         {
-            _logger = logger;
+            _injectedObject = injectedObject;
         }
 
         public Task Execute(IJobExecutionContext context)
         {
-            var message = _logger != null
-                ? "DependencyInjectionJob executed and injected!"
-                : "DependencyInjectionJob executed without being injected!";
+            var message = _injectedObject != null
+                ? "Executed and injected!"
+                : "Executed without being injected!";
 
-            Console.WriteLine($"{message}\n");
+            _logger.Log($"{message}");
 
             return Task.CompletedTask;
         }

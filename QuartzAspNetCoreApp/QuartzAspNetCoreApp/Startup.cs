@@ -4,16 +4,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
+using Quartz.Plugin.Interrupt;
 using QuartzAspNetCoreApp.Extensions;
 using QuartzAspNetCoreApp.Jobs;
 using System;
+using System.Globalization;
 
 namespace QuartzAspNetCoreApp
 {
     public class Startup
     {
-        const string groupName = "myGroup";
-        const string defaultCronExpression = "0/5 * * * * ?";
+        const string groupName = "MyGroup";
 
         public Startup(IConfiguration configuration)
         {
@@ -47,6 +48,21 @@ namespace QuartzAspNetCoreApp
                 // dependency injection.
                 q.UseMicrosoftDependencyInjectionJobFactory();
 
+                // When WaitForJobsToComplete is true, this will not work.
+                // InterruptJobsOnShutdownWithWait must be used instead.
+                //q.InterruptJobsOnShutdown = true;
+
+                q.InterruptJobsOnShutdownWithWait = true;
+
+                // This option is only present if the Quartz.Plugins package is installed.
+                q.UseJobAutoInterrupt(options =>
+                {
+                    // The cancellation of the CancellationToken of job instances will automatically
+                    // be requested if they execution goes past the defined at DefaultMaxRunTime.
+                    // 5 minutes is the default value.
+                    options.DefaultMaxRunTime = TimeSpan.FromMinutes(5);
+                });
+
                 q.UsePersistentStore(storeOptions =>
                 {
                     storeOptions.UsePostgres(postgresOptions =>
@@ -55,25 +71,70 @@ namespace QuartzAspNetCoreApp
                     });
 
                     storeOptions.UseJsonSerializer();
+
+                    // When Quartz is configured for clustering, any job interrupted while
+                    // executing will be recovered by another node that may be running concurrently
+                    // with the one that was executing the job.
                     storeOptions.UseClustering();
                 });
 
-                string dailyCronExpression = $"0 0 {DateTime.Now.Hour} * * ?";
+                var greetingsJobKey = new JobKey(typeof(GreetingsJob).Name, groupName);
+                q.ScheduleJob<GreetingsJob>(
+                    t =>
+                    {
+                        t.WithIdentity($"{greetingsJobKey.Name}Trigger", groupName);
+                        t.StartNow();
+                        t.WithCronSchedule("0/5 * * * * ?");
+                    },
+                    j =>
+                    {
+                        j.WithIdentity(greetingsJobKey);
+                    });
 
+                // AddJobAndCronTrigger is an extension method made in this project that does the
+                // same that was done to schedule the GreetingsJob. This was done just to have less
+                // code verbosity.
+                q.AddJobAndCronTrigger<DependencyInjectionJob>("0/8 * * * * ?", groupName);
+                q.AddJobAndCronTrigger<SlowJob>("0/11 * * * * ?", groupName);
 
-                //q.AddJobAndCronTrigger<GreetingsJob>(defaultCronExpression, false, groupName);
-                //q.AddJobAndCronTrigger<DependencyInjectionJob>(defaultCronExpression, false,
-                //    groupName);
-                //q.AddJobAndCronTrigger<SlowJob>(defaultCronExpression, false, groupName);
-                //q.AddJobAndCronTrigger<RecoverableJob>(dailyCronExpression, false, groupName);
-                q.AddJobAndSimpleTrigger<RecoverableJob>(0, TimeSpan.MaxValue, true, groupName);
+                var recoverableJobKey = new JobKey(typeof(RecoverableJob).Name, groupName);
+                q.ScheduleJob<RecoverableJob>(
+                    t =>
+                    {
+                        t.WithIdentity($"{recoverableJobKey.Name}Trigger", groupName);
+                        t.StartNow();
+                    },
+                    j =>
+                    {
+                        j.WithIdentity(recoverableJobKey);
+                        j.RequestRecovery();
+                    });
+
+                var interruptibleJobKey = new JobKey(typeof(InterruptibleJob).Name, groupName);
+                q.ScheduleJob<InterruptibleJob>(
+                    t =>
+                    {
+                        t.WithIdentity($"{interruptibleJobKey.Name}Trigger", groupName);
+                        t.StartNow();
+                    },
+                    j =>
+                    {
+                        j.WithIdentity(interruptibleJobKey);
+
+                        // For the job to be interruped by the UseJobAutoInterrupt after the given
+                        // time configured, this key-value pair must be added to the UsingJobData.
+                        j.UsingJobData(JobInterruptMonitorPlugin.JobDataMapKeyAutoInterruptable, true);
+
+                        // Overrides the max time set at the UseJobAutoInterrupt options.
+                        j.UsingJobData(JobInterruptMonitorPlugin.JobDataMapKeyMaxRunTime, TimeSpan.FromSeconds(15).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
+                    });
             });
 
             services.AddQuartzHostedService(options =>
             {
-                // If this option is set to true, then when the app is shutdown it will await all the
-                // current jobs in execution to finish.
-                //options.WaitForJobsToComplete = true;
+                // If this option is set to true, when the app is shutdown, it will await all the
+                // jobs yet in execution to finish.
+                options.WaitForJobsToComplete = true;
             });
 
             services.AddControllers();

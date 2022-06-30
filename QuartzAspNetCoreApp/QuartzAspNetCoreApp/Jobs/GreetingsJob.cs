@@ -1,14 +1,16 @@
 ﻿using Quartz;
-using System;
+using QuartzAspNetCoreApp.Jobs.Logger;
 using System.Threading.Tasks;
 
 namespace QuartzAspNetCoreApp.Jobs
 {
     public class GreetingsJob : IJob
     {
+        private JobLogger<GreetingsJob> _logger = new JobLogger<GreetingsJob>();
+
         public Task Execute(IJobExecutionContext context)
         {
-            Console.WriteLine("Hello! GreetingsJob executed.\n");
+            _logger.Log("Hello!");
             return Task.CompletedTask;
         }
     }
