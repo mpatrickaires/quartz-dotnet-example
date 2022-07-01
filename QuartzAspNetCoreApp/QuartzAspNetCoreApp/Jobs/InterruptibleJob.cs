@@ -8,7 +8,7 @@ namespace QuartzAspNetCoreApp.Jobs
     [DisallowConcurrentExecution]
     public class InterruptibleJob : IJob
     {
-        private JobLogger<InterruptibleJob> _logger = new JobLogger<InterruptibleJob>();
+        private CustomLogger<InterruptibleJob> _logger = new CustomLogger<InterruptibleJob>();
 
         public async Task Execute(IJobExecutionContext context)
         {

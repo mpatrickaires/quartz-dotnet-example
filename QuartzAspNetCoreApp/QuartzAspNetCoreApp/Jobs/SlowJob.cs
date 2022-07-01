@@ -8,7 +8,7 @@ namespace QuartzAspNetCoreApp.Jobs
     [DisallowConcurrentExecution]
     public class SlowJob : IJob
     {
-        private JobLogger<SlowJob> _logger = new JobLogger<SlowJob>();
+        private CustomLogger<SlowJob> _logger = new CustomLogger<SlowJob>();
 
         public async Task Execute(IJobExecutionContext context)
         {

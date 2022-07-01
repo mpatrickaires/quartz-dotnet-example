@@ -8,7 +8,7 @@ namespace QuartzAspNetCoreApp.Jobs
     public class DependencyInjectionJob : IJob
     {
         private ILogger<DependencyInjectionJob> _injectedObject;
-        private JobLogger<DependencyInjectionJob> _logger = new JobLogger<DependencyInjectionJob>();
+        private CustomLogger<DependencyInjectionJob> _logger = new CustomLogger<DependencyInjectionJob>();
 
         public DependencyInjectionJob(ILogger<DependencyInjectionJob> injectedObject)
         {

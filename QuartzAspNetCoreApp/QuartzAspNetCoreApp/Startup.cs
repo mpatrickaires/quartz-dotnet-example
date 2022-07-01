@@ -7,6 +7,7 @@ using Quartz;
 using Quartz.Plugin.Interrupt;
 using QuartzAspNetCoreApp.Extensions;
 using QuartzAspNetCoreApp.Jobs;
+using QuartzAspNetCoreApp.Listeners;
 using System;
 using System.Globalization;
 
@@ -78,6 +79,8 @@ namespace QuartzAspNetCoreApp
                     storeOptions.UseClustering();
                 });
 
+                q.AddJobListener<GlobalJobListener>();
+
                 var greetingsJobKey = new JobKey(typeof(GreetingsJob).Name, groupName);
                 q.ScheduleJob<GreetingsJob>(
                     t =>
@@ -134,7 +137,7 @@ namespace QuartzAspNetCoreApp
             {
                 // If this option is set to true, when the app is shutdown, it will await all the
                 // jobs yet in execution to finish.
-                options.WaitForJobsToComplete = true;
+                //options.WaitForJobsToComplete = true;
             });
 
             services.AddControllers();

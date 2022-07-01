@@ -6,7 +6,7 @@ namespace QuartzAspNetCoreApp.Jobs
 {
     public class GreetingsJob : IJob
     {
-        private JobLogger<GreetingsJob> _logger = new JobLogger<GreetingsJob>();
+        private CustomLogger<GreetingsJob> _logger = new CustomLogger<GreetingsJob>();
 
         public Task Execute(IJobExecutionContext context)
         {

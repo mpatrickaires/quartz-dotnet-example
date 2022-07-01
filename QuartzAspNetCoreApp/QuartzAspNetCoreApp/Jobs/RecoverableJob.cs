@@ -8,7 +8,7 @@ namespace QuartzAspNetCoreApp.Jobs
     [DisallowConcurrentExecution]
     public class RecoverableJob : IJob
     {
-        private JobLogger<RecoverableJob> _logger = new JobLogger<RecoverableJob>();
+        private CustomLogger<RecoverableJob> _logger = new CustomLogger<RecoverableJob>();
 
         public async Task Execute(IJobExecutionContext context)
         {
